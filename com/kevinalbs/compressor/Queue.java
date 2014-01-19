@@ -1,4 +1,5 @@
-public class Queue<T extends Comparable<T>>{
+package com.kevinalbs.compressor;
+public class Queue<T>{
 	private class Node<T>{
 		public T data;
 		public Node<T> next;
@@ -39,6 +40,29 @@ public class Queue<T extends Comparable<T>>{
 			rear.next = rear.next.next;
 		}
 		numItems--;
+		return toReturn;
+	}
+	public T peek(){
+		if(rear == null){
+			return null;
+		}
+		else{
+			return rear.next.data;
+		}
+	}
+	public boolean isEmpty(){
+		return numItems == 0;
+	}
+	public String toString(){
+		if(rear == null){
+			return "";
+		}
+		Node<T> ptr = rear.next;
+		String toReturn = "";
+		do{
+			toReturn += ptr.data.toString() + " ";
+			ptr = ptr.next;
+		}while(ptr != rear.next);
 		return toReturn;
 	}
 }
