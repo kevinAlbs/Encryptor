@@ -16,10 +16,11 @@ public class MyLetter implements Comparable<MyLetter>{
 	}
 	public String toString(){
 		if(!isMyLetter){
-			return "NULL|" + this.n;
+			//doesn't really matter what character I use I guess
+			return "0";
 		}
 		else{
-			return this.c + "|" + this.n;
+			return this.c + "";
 		}
 	}
 }

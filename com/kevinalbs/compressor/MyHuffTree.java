@@ -11,12 +11,12 @@ public class MyHuffTree{
 	private float avgLength = -1;
 	private String[] map = new String[256]; //maps char to bit string
 	private Node root; 
-	private String flattened;
+	private String inflattened = "", preflattened = "";
 	/*
 	builds a tree from a flattened string
 	since static, use a different generic variable
 	*/
-	public static MyHuffTree buildTree(String s){
+	public static MyHuffTree buildTree(String pre, String in){
 		return null;
 	}
 
@@ -54,20 +54,28 @@ public class MyHuffTree{
 		}
 	}
 
-	public void inOrder(){
-		flattened = "";
-		pInOrder(root);
-	}
 	private void pInOrder(Node n){
 		if(n == null){
 			return;
 		}
 		else{
 			pInOrder(n.left);
-			flattened += n.data.toString() + " ";
+			inflattened += n.data.toString();
 			pInOrder(n.right);
 		}
 	}
+
+	private void pPreOrder(Node n){
+		if(n == null){
+			return;
+		}
+		else{
+			preflattened += n.data.toString();
+			pPreOrder(n.left);
+			pPreOrder(n.right);
+		}
+	}
+
 	public MyLetter getRootData(){
 		return root.data;
 	}
@@ -104,7 +112,9 @@ public class MyHuffTree{
 	}
 	//returns flattened tree
 	public String toString(){
-		inOrder();
-		return flattened;
+		pPreOrder(root);
+		pInOrder(root);
+		//since the trees will not have duplicate characters, searching for the last occurrence of the repeated characters should give the correct end
+		return preflattened + "aa" + inflattened + "bb";
 	}
 }

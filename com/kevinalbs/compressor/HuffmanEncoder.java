@@ -81,6 +81,7 @@ public class HuffmanEncoder{
 				input += (char)d;
 				d = in.read();
 			}
+			in.close();
 		}
 		catch(IOException ioe){}
 		//build an array of the used MyLetters and sort it ascending
@@ -125,7 +126,8 @@ public class HuffmanEncoder{
 				q2.enqueue(h1);
 			}
 		}
-		output.encode(input);
+		//output.encode(input);
+		System.out.println(output);
 		//put each element of the array into a tree and add to the first queue
 
 		//use two queues to build the final huffman encoded tree
