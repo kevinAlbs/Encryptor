@@ -45,7 +45,7 @@ public class HuffmanEncoder{
 		quicksort(list, hi+1, top);
 
 	}
-	private MyHuffTree<MyLetter> getMin(Queue<MyHuffTree<MyLetter>> q1, Queue<MyHuffTree<MyLetter>> q2){
+	private MyHuffTree getMin(Queue<MyHuffTree> q1, Queue<MyHuffTree> q2){
 		if(q1.isEmpty()){
 			return q2.dequeue();
 		}
@@ -68,6 +68,7 @@ public class HuffmanEncoder{
 	public HuffmanEncoder(File f){
 		int[] freqs = new int[256];//hash map for frequencies
 		int totalMyLetters = 0;//counts how many distinct MyLetters
+		String input = "";
 		try{
 			FileInputStream in = new FileInputStream(f);
 			int d = in.read();
@@ -77,6 +78,7 @@ public class HuffmanEncoder{
 					totalMyLetters++;
 				}
 				freqs[d]++;
+				input += (char)d;
 				d = in.read();
 			}
 		}
@@ -91,19 +93,19 @@ public class HuffmanEncoder{
 			}
 		}
 		quicksort(list);
-		Queue<MyHuffTree<MyLetter>> q1 = new Queue<MyHuffTree<MyLetter>>();
-		Queue<MyHuffTree<MyLetter>> q2 = new Queue<MyHuffTree<MyLetter>>();
-		MyHuffTree<MyLetter> output;
+		Queue<MyHuffTree> q1 = new Queue<MyHuffTree>();
+		Queue<MyHuffTree> q2 = new Queue<MyHuffTree>();
+		MyHuffTree output;
 		for(int i = 0; i < list.length; i++){
 			//System.out.println(list[i].c + "," + list[i].n);
-			MyHuffTree<MyLetter> newTree = new MyHuffTree<MyLetter>();
+			MyHuffTree newTree = new MyHuffTree();
 			newTree.insert(list[i]);
 			q1.enqueue(newTree);
 		}
 
 		while(true){
 			//get first item
-			MyHuffTree<MyLetter> h1,h2;
+			MyHuffTree h1,h2;
 			h1 = this.getMin(q1,q2);
 			h2 = this.getMin(q1,q2);
 			//h1 should never be null since at the beginning of the loop, there should at least be one item in one queue
@@ -120,11 +122,10 @@ public class HuffmanEncoder{
 				break;
 			}
 			else{
-				q2.enqueue(h2);
+				q2.enqueue(h1);
 			}
 		}
-		System.out.println("Done");
-		System.out.println(output);
+		output.encode(input);
 		//put each element of the array into a tree and add to the first queue
 
 		//use two queues to build the final huffman encoded tree

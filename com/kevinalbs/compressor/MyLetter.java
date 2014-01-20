@@ -16,7 +16,7 @@ public class MyLetter implements Comparable<MyLetter>{
 	}
 	public String toString(){
 		if(!isMyLetter){
-			return "|" + this.n;
+			return "NULL|" + this.n;
 		}
 		else{
 			return this.c + "|" + this.n;
