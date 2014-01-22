@@ -1,6 +1,6 @@
 package com.kevinalbs.compressor;
 public class MyHuffTree{
-	private class Node{
+	private static class Node{
 		public MyLetter data;
 		public Node left, right;
 		public Node(MyLetter data){
@@ -15,9 +15,34 @@ public class MyHuffTree{
 	/*
 	builds a tree from a flattened string
 	since static, use a different generic variable
+
+	This needs to be rethought since the trees contain duplicates of the 0 value. I need to separate nodes somehow.
 	*/
-	public static MyHuffTree buildTree(String pre, String in){
-		return null;
+	public static MyHuffTree buildTree(String[] pre, String[] in){
+		MyHuffTree newTree = new MyHuffTree();
+		Node n = buildTree(pre,in,0,in.length-1,0);
+		newTree.root = n;
+		return newTree;
+	}
+
+	private static Node buildTree(String[] pre, String[] in, int lo, int hi, int preI){
+		if(lo > hi || preI >= pre.length){
+			//on empty tree, 
+			return null;
+		}
+		String target = pre[preI];
+		int id = Integer.parseInt(target);
+		Node newNode = new Node(new MyLetter(id,0));
+		int j;
+		for(j = lo; j <= hi; j++){
+			if(in[j].equals(target)){
+				break;
+			}
+		}
+		//System.out.println(j);
+		newNode.left = buildTree(pre, in, lo, j-1, preI+1);
+		newNode.right = buildTree(pre, in, j+1, hi, preI+(j-lo) + 1);
+		return newNode;
 	}
 
 	public void addTree(MyHuffTree otherTree, MyLetter topNodeData){
@@ -95,7 +120,7 @@ public class MyHuffTree{
 		getCodes(n.left, str + "0", totalLength);
 		if(n.left == null && n.right == null){
 			//leaf node
-			map[(int)(n.data.c)] = str;
+			map[n.data.id] = str;
 			avgLength += str.length() * ((float)n.data.n) / totalLength;
 		}
 		getCodes(n.right, str + "1", totalLength);
@@ -112,9 +137,13 @@ public class MyHuffTree{
 	}
 	//returns flattened tree
 	public String toString(){
+		preflattened = "";
+		inflattened = "";
 		pPreOrder(root);
 		pInOrder(root);
+		preflattened = preflattened.substring(0, preflattened.length() - 1);
+		inflattened = inflattened.substring(0, inflattened.length() - 1);
 		//since the trees will not have duplicate characters, searching for the last occurrence of the repeated characters should give the correct end
-		return preflattened + "aa" + inflattened + "bb";
+		return preflattened + inflattened;
 	}
 }

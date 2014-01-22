@@ -89,7 +89,7 @@ public class HuffmanEncoder{
 		int listIndex = 0;
 		for(int i = 0; i < freqs.length; i++){
 			if(freqs[i] != 0){
-				list[listIndex] = new MyLetter((char)i, freqs[i]);
+				list[listIndex] = new MyLetter(i, freqs[i]);
 				listIndex++;
 			}
 		}
@@ -115,7 +115,7 @@ public class HuffmanEncoder{
 				break;
 			}
 			//make the new tree
-			MyLetter newLetter = new MyLetter(false);//interior node
+			MyLetter newLetter = new MyLetter();//interior node
 			newLetter.n = h1.getRootData().n + h2.getRootData().n;
 			h1.addTree(h2, newLetter);
 			if(q1.isEmpty() && q2.isEmpty()){
@@ -128,6 +128,15 @@ public class HuffmanEncoder{
 		}
 		//output.encode(input);
 		System.out.println(output);
+		System.out.println("================================================");
+		String str = output.toString();
+		int p1 = str.length()/2;
+		String preorder = str.substring(0,p1);
+		String inorder = str.substring(p1);
+		String[] pre = preorder.split("\\|"); //it's a regex... derp
+		String[] in = inorder.split("\\|");
+		MyHuffTree newTree = MyHuffTree.buildTree(pre,in);
+		System.out.println(newTree);
 		//put each element of the array into a tree and add to the first queue
 
 		//use two queues to build the final huffman encoded tree
