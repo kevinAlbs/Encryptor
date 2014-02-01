@@ -129,11 +129,12 @@ public class MyHuffTree{
 	public String encode(String input){
 		//first get the map of the letters
 		getCodes(input.length());
-		System.out.println("Average length is : " + avgLength);
+		//System.out.println("Average length is : " + avgLength);
+		String toReturn = "";
 		for(int i = 0; i < input.length(); i++){
-			System.out.println(input.charAt(i) + " = " + map[(int)input.charAt(i)]);
+			toReturn += map[(int)input.charAt(i)];
 		}
-		return "";
+		return toReturn;
 	}
 	//returns flattened tree
 	public String toString(){
@@ -144,6 +145,6 @@ public class MyHuffTree{
 		preflattened = preflattened.substring(0, preflattened.length() - 1);
 		inflattened = inflattened.substring(0, inflattened.length() - 1);
 		//since the trees will not have duplicate characters, searching for the last occurrence of the repeated characters should give the correct end
-		return preflattened + inflattened;
+		return preflattened + inflattened + "E"; //E signifies end
 	}
 }

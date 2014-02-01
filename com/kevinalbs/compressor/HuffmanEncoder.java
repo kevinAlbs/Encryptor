@@ -3,6 +3,8 @@ import java.util.Scanner;
 import java.io.*;
 
 public class HuffmanEncoder{
+	String toEncode = "";
+	MyHuffTree tree = null;
 	//private MyHuffTree<MyLetter> output;
 	private void  quicksort(MyLetter[] list){
 		quicksort(list, 0, list.length - 1);
@@ -84,6 +86,7 @@ public class HuffmanEncoder{
 			in.close();
 		}
 		catch(IOException ioe){}
+		toEncode = input;
 		//build an array of the used MyLetters and sort it ascending
 		MyLetter[] list = new MyLetter[totalMyLetters];
 		int listIndex = 0;
@@ -126,6 +129,7 @@ public class HuffmanEncoder{
 				q2.enqueue(h1);
 			}
 		}
+		tree = output;
 		//output.encode(input);
 		System.out.println(output);
 		System.out.println("================================================");
@@ -143,7 +147,45 @@ public class HuffmanEncoder{
 	}
 
 	//returns the flattened tree preceded by the number of characters as an integer (so we know how much to read)
-	public String export(){
-		return "";
+	public Byte[] export(){
+		if(tree == null){
+			System.err.println("The tree has not been built");
+			return null;	
+		}
+		else{
+			//get encoding for each character in input and (each character in the tree which will not be compressed)
+			String bitString = tree.encode(toEncode);
+			String treeString = tree.toString();
+			int numBytes = (int)Math.ceil(bitString.length()/8) + treeString.length() + 1;//TODO: why is +1 necessary?
+			System.out.println("NumBytes " + numBytes);
+			Byte[] data = new Byte[numBytes];
+			//first put in the tree
+			for(int i = 0; i < treeString.length(); i++){
+				data[i] = (byte)treeString.charAt(i);
+			}
+			//how do I deal with the last bits?
+			int byteIndex = treeString.length();
+			for(int i = 0; i < bitString.length(); i+=8){
+				String byteStr = "";
+				if(i + 8 > bitString.length()){
+					byteStr = bitString.substring(i);//get last bits (not 8 though)
+					//append zeros
+					while(byteStr.length() < 8){
+						byteStr = byteStr + "0";
+					}
+				}
+				else{
+					byteStr = bitString.substring(i, i+8);
+				}
+				//parse byte does not work with 2's compliment, it expects the leading digit to be a - if negative
+				if(byteStr.charAt(0) == '1'){
+					byteStr = "-" + byteStr.substring(1);
+				}
+				data[byteIndex] = Byte.parseByte(byteStr, 2);
+				byteIndex++;
+			}
+			return data;
+		}
+		
 	}
 }

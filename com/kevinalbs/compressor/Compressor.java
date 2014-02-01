@@ -22,6 +22,10 @@ public class Compressor{
 			return;
 		}
 		HuffmanEncoder h = new HuffmanEncoder(f);
+		Byte[] data = h.export();
+		for(int i = 0; i < data.length; i++){
+			System.out.print((char)data[i].intValue());
+		}
 		
 	}
 }
