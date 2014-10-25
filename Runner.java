@@ -113,12 +113,12 @@ public class Runner{
 				return;
 			}
 			String tree_signature = file_contents.substring(0, nl_index);
-			String encrypted = file_contents.substring(nl_index);
+			String encrypted = file_contents.substring(nl_index+1);
 
 			String encoded = Encryptor.decrypt(ArgParser.key, encrypted);
 
 			HuffmanEncoder h = HuffmanEncoder.fromSignature(tree_signature);
-			String decoded = h.decode(file_contents);
+			String decoded = h.decode(encoded);
 
 			if(ArgParser.to_file.equals("")){
 				//print out
