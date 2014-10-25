@@ -1,4 +1,4 @@
-package com.kevinalbs.compressor;
+
 public class MyLetter implements Comparable<MyLetter>{
 	public int n; //num of occurrences
 	public int id = -1;

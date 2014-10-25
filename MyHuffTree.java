@@ -1,4 +1,4 @@
-package com.kevinalbs.compressor;
+
 public class MyHuffTree{
 	private static class Node{
 		public MyLetter data;

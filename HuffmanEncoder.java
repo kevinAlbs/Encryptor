@@ -1,4 +1,4 @@
-package com.kevinalbs.compressor;
+
 import java.util.Scanner;
 import java.io.*;
 
@@ -151,37 +151,28 @@ public class HuffmanEncoder{
 		tree = MyHuffTree.buildTree(tree_signature);
 	}
 
-
 	/*
 	 * @param String s - a string of 0's and 1's
 	 */
-	/*
-	public static String bitStringToCharacters(String s){
+	private String bitStringToCharacters(String s){
+		/* TODO finish implementing
+		 * The extra padding on the end can be troublesome
+		 * since reading the extra characters is ambiguous.
+		 * Best option might be to encode the string length
+		 */
 		int numBytes = (int)Math.ceil(s.length()/8);
 		Byte[] data = new Byte[numBytes];
 		//how do I deal with the last bits?
-		int byteIndex = treeString.length();
-		for(int i = 0; i < bitString.length(); i+=8){
-			String byteStr = "";
-			if(i + 8 > bitString.length()){
-				byteStr = bitString.substring(i);//get last bits (not 8 though)
-				//append zeros
-				while(byteStr.length() < 8){
-					byteStr = byteStr + "0";
-				}
+		int byteIndex = s.length();
+		for(int i = 0; i < numBytes; i++){
+			String bit_string = "";
+			if(s.length() < 8){
+				//pad the beginning with zeros
 			}
-			else{
-				byteStr = bitString.substring(i, i+8);
-			}
-			//parse byte does not work with 2's compliment, it expects the leading digit to be a - if negative
-			if(byteStr.charAt(0) == '1'){
-				byteStr = "-" + byteStr.substring(1);
-			}
-			data[byteIndex] = Byte.parseByte(byteStr, 2);
-			byteIndex++;
+			//Byte.parseByte(byteStr, 2); - use to convert string to byte, then covert to char
 		}
-		return data;
-	}*/
+		return "";
+	}
 
 	public String decode(String s){
 		if(tree == null){

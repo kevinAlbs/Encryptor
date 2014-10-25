@@ -1,1 +1,1 @@
-javac com/kevinalbs/compressor/*.java && java com.kevinalbs.compressor.Compressor test.txt
+javac *.java && java Runner --from-file test.txt --key test

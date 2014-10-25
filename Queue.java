@@ -1,4 +1,4 @@
-package com.kevinalbs.compressor;
+
 public class Queue<T>{
 	private class Node<T>{
 		public T data;
