@@ -12,15 +12,32 @@ public class MyHuffTree{
 	private String[] map = new String[256]; //maps char to bit string
 	private Node root; 
 	private String inflattened = "", preflattened = "";
+	public final static String SEPARATOR = ",", END = "END";
+
+	public static MyHuffTree buildTree(String signature){
+		if(signature.indexOf(MyHuffTree.END) == -1){
+			throw new IllegalArgumentException("Bad tree signature");
+		}
+		String[] parts = signature.split(MyHuffTree.END);
+		if(parts.length != 2){
+			//last part is empty (2 total)
+			throw new IllegalArgumentException("Bad tree signature");
+		}
+		String preorder = parts[0];
+		String inorder = parts[1];
+		return buildTree(preorder, inorder);
+	}
 	/*
 	builds a tree from a flattened string
 	since static, use a different generic variable
 
 	This needs to be rethought since the trees contain duplicates of the 0 value. I need to separate nodes somehow.
 	*/
-	public static MyHuffTree buildTree(String[] pre, String[] in){
+	public static MyHuffTree buildTree(String pre, String in){
 		MyHuffTree newTree = new MyHuffTree();
-		Node n = buildTree(pre,in,0,in.length-1,0);
+		String[] pre_arr = pre.split(MyHuffTree.SEPARATOR);
+		String[] in_arr = in.split(MyHuffTree.SEPARATOR);
+		Node n = buildTree(pre_arr,in_arr,0,in_arr.length-1,0);
 		newTree.root = n;
 		return newTree;
 	}
@@ -85,7 +102,7 @@ public class MyHuffTree{
 		}
 		else{
 			pInOrder(n.left);
-			inflattened += n.data.toString();
+			inflattened += n.data.toString() + MyHuffTree.SEPARATOR;
 			pInOrder(n.right);
 		}
 	}
@@ -95,7 +112,7 @@ public class MyHuffTree{
 			return;
 		}
 		else{
-			preflattened += n.data.toString();
+			preflattened += n.data.toString() + MyHuffTree.SEPARATOR;
 			pPreOrder(n.left);
 			pPreOrder(n.right);
 		}
@@ -136,6 +153,28 @@ public class MyHuffTree{
 		}
 		return toReturn;
 	}
+
+	public String decode(String input){
+		String decoded = "";
+		Node ptr = root;
+		for(int i = 0; i < input.length(); i++){
+			char c = input.charAt(i);
+			if(ptr.left == null && ptr.right == null){
+				//leaf
+				decoded += ptr.data.asChar();
+				ptr = root;
+			}
+			if(c == '1'){
+				ptr = ptr.right;
+			} else if(c == '0'){
+				ptr = ptr.left;
+			}
+			if(ptr == null){
+				throw new IllegalArgumentException("Invalid code");
+			}
+		}
+		return decoded;
+	}
 	//returns flattened tree
 	public String toString(){
 		preflattened = "";
@@ -145,6 +184,6 @@ public class MyHuffTree{
 		preflattened = preflattened.substring(0, preflattened.length() - 1);
 		inflattened = inflattened.substring(0, inflattened.length() - 1);
 		//since the trees will not have duplicate characters, searching for the last occurrence of the repeated characters should give the correct end
-		return preflattened + inflattened + "E"; //E signifies end
+		return preflattened + MyHuffTree.END + inflattened + MyHuffTree.END;
 	}
 }

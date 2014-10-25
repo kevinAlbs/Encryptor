@@ -3,6 +3,7 @@ public class MyLetter implements Comparable<MyLetter>{
 	public int n; //num of occurrences
 	public int id = -1;
 	private static int UNIQUE_ID = -1;
+
 	public boolean isMyLetter = true; //false if this is a non-leaf node in the tree
 	public MyLetter(int id, int n){
 		this.id = id;
@@ -19,12 +20,9 @@ public class MyLetter implements Comparable<MyLetter>{
 		return this.n - o.n;
 	}
 	public String toString(){
-		if(!isMyLetter){
-			//doesn't really matter what character I use I guess, just has to be unique
-			return this.id + "|";
-		}
-		else{
-			return this.id + "|";
-		}
+		return this.id + "";
+	}
+	public String asChar(){
+		return (char)this.id + "";
 	}
 }
