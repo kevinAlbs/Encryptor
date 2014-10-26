@@ -153,34 +153,61 @@ public class HuffmanEncoder{
 
 	/*
 	 * @param String s - a string of 0's and 1's
+	 * @return String a string of characters formed by treating each 8 characters as bytes
 	 */
-	private String bitStringToCharacters(String s){
-		/* TODO finish implementing
-		 * The extra padding on the end can be troublesome
-		 * since reading the extra characters is ambiguous.
-		 * Best option might be to encode the string length
-		 */
-		int numBytes = (int)Math.ceil(s.length()/8);
-		Byte[] data = new Byte[numBytes];
+	public static String bitStringToCharacters(String s){
+		String output = "";
+		int numBytes = (int)Math.ceil(s.length()/8.0);
 		//how do I deal with the last bits?
 		int byteIndex = s.length();
-		for(int i = 0; i < numBytes; i++){
-			String bit_string = "";
+		while(s.length() > 0){
+			String bit_string = s.substring(0, Math.min(s.length(), 8));
 			if(s.length() < 8){
-				//pad the beginning with zeros
+				s = "";
+				//pad the end with zeros
+				String zeros = "00000000";
+				bit_string += zeros.substring(8 - bit_string.length());
+			} else {
+				s = s.substring(8); //chop off first 8
 			}
-			//Byte.parseByte(byteStr, 2); - use to convert string to byte, then covert to char
+			char c = (char)Integer.parseInt(bit_string, 2); //convert string to byte, then covert to char
+			output += c;
 		}
-		return "";
+		return output;
 	}
 
-	public String decode(String s){
+	public static String charactersToBitString(String s){
+		String bit_string = "";
+		for(int i = 0; i < s.length(); i++){
+			String byte_string = "";
+			char c = s.charAt(i);
+			int b = (int)c;
+			for(int j = 0; j < 8; j++){
+				int result = b & 1;
+				if(result == 1){
+					byte_string = "1" + byte_string;
+				} else {
+					byte_string = "0" + byte_string;
+				}
+				b = b >> 1;
+			}
+			bit_string += byte_string;
+		}
+		return bit_string;
+	}
+
+	/* Decodes a string.
+	 * @param s String to decode. Should be a string of 1 and 0 characters. "100100101110" etc.
+	 * @param num_bits Number of bit characters to decode
+	 */
+	public String decode(String s, int num_bits){
 		if(tree == null){
 			throw new IllegalStateException("Tree has not been built");
 		}
-		return tree.decode(s);
+		return tree.decode(s.substring(0, num_bits));
 	}
 
+	/* Takes any string, returns bit string compressed to characters */
 	public String encode(String s){
 		if(tree == null){
 			throw new IllegalStateException("Tree has not been built");

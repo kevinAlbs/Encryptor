@@ -50,6 +50,7 @@ public class Runner{
 		return readFile(new File(filename));
 	}
 
+
 	public static String readFile(File f){
 		String file_contents = "";
 		try{
@@ -67,11 +68,15 @@ public class Runner{
 		return file_contents;
 	}
 
+	/* Tried using FileWriter before, but screwed up encoding on writing for compressed/encrypted letters.
+	*/
 	public static void writeFile(String contents, File f){
 		try{
-			FileWriter out = new FileWriter(f);
-			out.write(contents);
-			out.flush();
+			FileOutputStream out = new FileOutputStream(f);
+			for(int i = 0; i < contents.length(); i++){
+				char c = contents.charAt(i);
+				out.write((int)c);
+			}
 			out.close();
 		} catch(IOException ioe){
 			System.out.println("Cannot write file " + ioe.getMessage());
@@ -97,28 +102,44 @@ public class Runner{
 			String file_contents = readFile(f);
 			HuffmanEncoder h = HuffmanEncoder.fromInput(file_contents);
 			String encoded = h.encode(file_contents);
-			String encrypted = Encryptor.encrypt(ArgParser.key, encoded);
+			String compressed = HuffmanEncoder.bitStringToCharacters(encoded);
+			String encrypted = Encryptor.encrypt(ArgParser.key, compressed);
+			
 			if(ArgParser.to_file.equals("")){
 				ArgParser.to_file = "encrypted.dat";
 			}
 			File out = new File(ArgParser.to_file);
-			writeFile(h.export() + "\n" + encrypted, out);
+
+			//write number of bits, tree signature, and encrypted data
+			String file_output = encoded.length() + "\n" + h.export() + "\n" + encrypted;
+			writeFile(file_output, out);
+
+			System.out.println("New file size is " + file_output.length() + " characters");
+			if (file_output.length() < file_contents.length()){
+				System.out.format("File size reduced by %4.2f%%\n", (file_output.length() * 1.0 / file_contents.length()) * 100);
+			}
 			System.out.println("Written to " + ArgParser.to_file);
+			
 		} else if(ArgParser.action.equals("decrypt")){
 			String file_contents = readFile(f);
-			//first line is tree
+			//first line is number of bits
 			int nl_index = file_contents.indexOf("\n");
 			if(nl_index == -1){
 				Runner.err("Bad file format");
 				return;
 			}
+			int num_bits = Integer.parseInt(file_contents.substring(0, nl_index));
+			file_contents = file_contents.substring(nl_index+1);
+
+			//second line is tree signature
+			nl_index = file_contents.indexOf("\n");
 			String tree_signature = file_contents.substring(0, nl_index);
-			String encrypted = file_contents.substring(nl_index+1);
-
-			String encoded = Encryptor.decrypt(ArgParser.key, encrypted);
-
 			HuffmanEncoder h = HuffmanEncoder.fromSignature(tree_signature);
-			String decoded = h.decode(encoded);
+
+			String encrypted = file_contents.substring(nl_index+1);
+			String compressed = Encryptor.decrypt(ArgParser.key, encrypted);
+			String encoded = HuffmanEncoder.charactersToBitString(compressed);
+			String decoded = h.decode(encoded, num_bits);
 
 			if(ArgParser.to_file.equals("")){
 				//print out
@@ -128,6 +149,7 @@ public class Runner{
 				writeFile(decoded, out);
 				System.out.println("Written to " + ArgParser.to_file);
 			}
+
 		}
 		
 	}
