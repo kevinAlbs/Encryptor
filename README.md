@@ -6,12 +6,14 @@ An implementation of huffman encoding and (naive/insecure) encryption of passwor
 Usage
 -----
 
-To run the GUI in Linux:
-`java -jar encryptor.jar`
-In OSX and Windows, you can run encryptor.jar directly.
+To compile:
+`javac *.java`
 
-Alternatively, you can run the command line version.
-`java Runner.java`
+To encrypt a file:
+`java Runner --action encrypt --from-file corpus.txt --to-file encrypted_corpus.txt --key password`
+
+To decrypt a file (and print to stdout):
+`java Runner.java --action decrypt --from-file encrypted_corpus.txt --key password`
 
 Current Status
 --------------

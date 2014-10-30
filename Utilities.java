@@ -28,9 +28,6 @@ public class Utilities{
 
     public static void writeFile(String contents, String filename){
         File f = new File(filename);
-        if(!f.canWrite()){
-            throw new IllegalArgumentException("File " + filename + " is not writable");
-        }
         writeFile(contents, f);
     }
 

@@ -1,6 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
 
+/* Coming soon */
 public class GUI extends JFrame{
     public GUI(){
 
