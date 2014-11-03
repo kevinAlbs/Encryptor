@@ -29,7 +29,6 @@ public class Runner{
 					}
 				}
 			} catch(IndexOutOfBoundsException ae){
-				System.out.println("Missing");
 				return false;
 			}
 
@@ -42,7 +41,7 @@ public class Runner{
 
 	public static void err(String msg){
 		System.err.println(msg);
-		System.out.println("Usage: java Runner --from-file <input file> --to-file <output file>");
+		System.out.println("Usage: java Runner --from-file <input file> --to-file <output file> --action <encrypt|decrypt> --key <password>");
 	}
 
 	/*
@@ -54,13 +53,16 @@ public class Runner{
 			return;
 		}
 
+		Encryptor e = new NaiveEncryptor(); //change this to use a custom encryptor
+
 
 		if(ArgParser.action.equals("encrypt")){
+			// read, compress, and encrypt
 			String file_contents = Utilities.readFile(ArgParser.from_file);
 			HuffmanEncoder h = HuffmanEncoder.fromInput(file_contents);
 			String encoded = h.encode(file_contents);
 			String compressed = HuffmanEncoder.bitStringToCharacters(encoded);
-			String encrypted = Encryptor.encrypt(ArgParser.key, compressed);
+			String encrypted = e.encrypt(ArgParser.key, compressed);
 			
 			if(ArgParser.to_file.equals("")){
 				ArgParser.to_file = "encrypted.dat";
@@ -95,7 +97,7 @@ public class Runner{
 			HuffmanEncoder h = HuffmanEncoder.fromSignature(tree_signature);
 
 			String encrypted = file_contents.substring(nl_index+1);
-			String compressed = Encryptor.decrypt(ArgParser.key, encrypted);
+			String compressed = e.decrypt(ArgParser.key, encrypted);
 			String encoded = HuffmanEncoder.charactersToBitString(compressed);
 			String decoded = h.decode(encoded, num_bits);
 

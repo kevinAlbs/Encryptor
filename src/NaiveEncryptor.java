@@ -4,7 +4,8 @@ At the moment, this is a toy encryptor, not secure in the least.
 TODO: generalize this to have an ecryptor interface to make it easy
 to swap in a different encryptor function
 */
-public class Encryptor{
+public class NaiveEncryptor implements Encryptor{
+
     private static String lengthen(String from, int to){
         String output = "";
         while(output.length() < to){
@@ -12,20 +13,22 @@ public class Encryptor{
         }
         return output.substring(0, to);
     }
-    public static String encrypt(String key, String s){
+
+    public String encrypt(String key, String input){
         if(key.length() == 0){
             throw new IllegalArgumentException("Key must not be empty");
         }
         //lengthen key to be same size as s
-        String fullkey = lengthen(key, s.length());
+        String fullkey = lengthen(key, input.length());
         String output = "";
         //perform xor
-        for(int i = 0; i < s.length(); i++){
-            output += (char)((byte)fullkey.charAt(i) ^ (byte)s.charAt(i));
+        for(int i = 0; i < input.length(); i++){
+            output += (char)((byte)fullkey.charAt(i) ^ (byte)input.charAt(i));
         }
         return output;
     }
-    public static String decrypt(String key, String s){
+
+    public String decrypt(String key, String s){
         return encrypt(key, s);
     }
 }
