@@ -1,7 +1,7 @@
+package encryption;
 
 /*
 At the moment, this is a toy encryptor, not secure in the least.
-TODO: generalize this to have an ecryptor interface to make it easy
 to swap in a different encryptor function
 */
 public class NaiveEncryptor implements Encryptor{

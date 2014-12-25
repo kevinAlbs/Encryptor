@@ -1,9 +1,9 @@
-
-import java.util.Scanner;
-import java.io.*;
+package encryption;
+import java.util.LinkedList;
+import java.util.Arrays;
 
 public class HuffmanEncoder{
-	MyHuffTree tree = null;
+	HuffmanTree tree = null;
 
 	/* Static instatiation */
 	private HuffmanEncoder(){}
@@ -26,63 +26,22 @@ public class HuffmanEncoder{
 		return h;
 	}
 
-	private void  quicksort(MyLetter[] list){
-		quicksort(list, 0, list.length - 1);
-	}
-	/* n * log(n) expected */
-	private void quicksort(MyLetter[] list, int bot, int top){
-		if(bot >= top){
-			//base case
-			return;
-		}
-
-		//choose first as pivot
-		int lo = bot + 1;
-		int hi = top;
-		int pivot = list[bot].n;
-
-		while(lo <= hi){
-			while(lo <= hi && list[lo].n < pivot){
-				lo++;
-			}
-			while(hi >= lo && list[hi].n >= pivot){
-				hi--;
-			}
-			//at this point they either crossed or require a swap
-			if(lo < hi){
-				//swap
-				MyLetter tmp = list[hi];
-				list[hi] = list[lo];
-				list[lo] = tmp;
-				lo++;
-				hi--;
-			}
-		}
-		//swap pivot with hi
-		MyLetter tmp = list[hi];
-		list[hi] = list[bot];
-		list[bot] = tmp;
-
-		quicksort(list, bot, hi-1);
-		quicksort(list, hi+1, top);
-
-	}
-	private MyHuffTree getMin(Queue<MyHuffTree> q1, Queue<MyHuffTree> q2){
+	private HuffmanTree getMin(LinkedList<HuffmanTree> q1, LinkedList<HuffmanTree> q2){
 		if(q1.isEmpty()){
-			return q2.dequeue();
+			return q2.pollFirst();
 		}
 		else if(q2.isEmpty()){
-			return q1.dequeue();
+			return q1.pollFirst();
 		}
 		else{
 			//get least two
-			int f1 = q1.peek().getRootData().n;
-			int f2 = q2.peek().getRootData().n;
+			int f1 = q1.peekFirst().getRootData().n;
+			int f2 = q2.peekFirst().getRootData().n;
 			if(f1 < f2){
-				return q1.dequeue();
+				return q1.pollFirst();
 			}
 			else{
-				return q2.dequeue();
+				return q2.pollFirst();
 			}
 		}
 	}
@@ -95,36 +54,35 @@ public class HuffmanEncoder{
 		for(int i = 0; i < input.length(); i++){
 			int char_num = (int)input.charAt(i);
 			if(freqs[char_num] == 0){
-				//new MyLetter
+				//new Letter
 				totalMyLetters++;
 			}
 			freqs[char_num]++;
 		}
-		
-		String toEncode = input;
+
 		//build an array of the used MyLetters and sort it ascending
-		MyLetter[] list = new MyLetter[totalMyLetters];
+		Letter[] list = new Letter[totalMyLetters];
 		int listIndex = 0;
 		for(int i = 0; i < freqs.length; i++){
 			if(freqs[i] != 0){
-				list[listIndex] = new MyLetter(i, freqs[i]);
+				list[listIndex] = new Letter(i, freqs[i]);
 				listIndex++;
 			}
 		}
-		quicksort(list);
-		Queue<MyHuffTree> q1 = new Queue<MyHuffTree>();
-		Queue<MyHuffTree> q2 = new Queue<MyHuffTree>();
-		MyHuffTree output;
+		Arrays.sort(list, new LetterComparator());
+		LinkedList<HuffmanTree> q1 = new LinkedList<HuffmanTree>();
+		LinkedList<HuffmanTree> q2 = new LinkedList<HuffmanTree>();
+		HuffmanTree output;
 		for(int i = 0; i < list.length; i++){
 			//System.out.println(list[i].c + "," + list[i].n);
-			MyHuffTree newTree = new MyHuffTree();
+			HuffmanTree newTree = new HuffmanTree();
 			newTree.insert(list[i]);
-			q1.enqueue(newTree);
+			q1.addLast(newTree);
 		}
 
 		while(true){
 			//get first item
-			MyHuffTree h1,h2;
+			HuffmanTree h1,h2;
 			h1 = this.getMin(q1,q2);
 			h2 = this.getMin(q1,q2);
 			//h1 should never be null since at the beginning of the loop, there should at least be one item in one queue
@@ -133,7 +91,7 @@ public class HuffmanEncoder{
 				break;
 			}
 			//make the new tree
-			MyLetter newLetter = new MyLetter();//interior node
+			Letter newLetter = new Letter();//interior node
 			newLetter.n = h1.getRootData().n + h2.getRootData().n;
 			h1.addTree(h2, newLetter);
 			if(q1.isEmpty() && q2.isEmpty()){
@@ -141,14 +99,14 @@ public class HuffmanEncoder{
 				break;
 			}
 			else{
-				q2.enqueue(h1);
+				q2.addLast(h1);
 			}
 		}
 		tree = output;
 	}
 
 	public void loadTree(String tree_signature){
-		tree = MyHuffTree.buildTree(tree_signature);
+		tree = HuffmanTree.buildTree(tree_signature);
 	}
 
 	/*

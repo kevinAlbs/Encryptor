@@ -1,9 +1,12 @@
-import java.util.Scanner;
-import java.io.*;
+import encryption.Encryptor;
+import encryption.HuffmanEncoder;
+import encryption.NaiveEncryptor;
+import encryption.Utilities;
 
 /* CLI runner
  * manages file input/output, and passes off data to huffman encoder and encryptor 
  */
+
 public class Runner{
 	private static class ArgParser{
 		public static String from_file="",

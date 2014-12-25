@@ -1,9 +1,10 @@
+package encryption;
 
-public class MyHuffTree{
+public class HuffmanTree {
 	private static class Node{
-		public MyLetter data;
+		public Letter data;
 		public Node left, right;
-		public Node(MyLetter data){
+		public Node(Letter data){
 			this.data = data;
 		}
 	}
@@ -14,11 +15,11 @@ public class MyHuffTree{
 	private String inflattened = "", preflattened = "";
 	public final static String SEPARATOR = ",", END = "END";
 
-	public static MyHuffTree buildTree(String signature){
-		if(signature.indexOf(MyHuffTree.END) == -1){
+	public static HuffmanTree buildTree(String signature){
+		if(signature.indexOf(HuffmanTree.END) == -1){
 			throw new IllegalArgumentException("Bad tree signature");
 		}
-		String[] parts = signature.split(MyHuffTree.END);
+		String[] parts = signature.split(HuffmanTree.END);
 		if(parts.length != 2){
 			//last part is empty (2 total)
 			throw new IllegalArgumentException("Bad tree signature");
@@ -33,10 +34,10 @@ public class MyHuffTree{
 
 	This needs to be rethought since the trees contain duplicates of the 0 value. I need to separate nodes somehow.
 	*/
-	public static MyHuffTree buildTree(String pre, String in){
-		MyHuffTree newTree = new MyHuffTree();
-		String[] pre_arr = pre.split(MyHuffTree.SEPARATOR);
-		String[] in_arr = in.split(MyHuffTree.SEPARATOR);
+	public static HuffmanTree buildTree(String pre, String in){
+		HuffmanTree newTree = new HuffmanTree();
+		String[] pre_arr = pre.split(HuffmanTree.SEPARATOR);
+		String[] in_arr = in.split(HuffmanTree.SEPARATOR);
 		Node n = buildTree(pre_arr,in_arr,0,in_arr.length-1,0);
 		newTree.root = n;
 		return newTree;
@@ -49,7 +50,7 @@ public class MyHuffTree{
 		}
 		String target = pre[preI];
 		int id = Integer.parseInt(target);
-		Node newNode = new Node(new MyLetter(id,0));
+		Node newNode = new Node(new Letter(id,0));
 		int j;
 		for(j = lo; j <= hi; j++){
 			if(in[j].equals(target)){
@@ -62,7 +63,7 @@ public class MyHuffTree{
 		return newNode;
 	}
 
-	public void addTree(MyHuffTree otherTree, MyLetter topNodeData){
+	public void addTree(HuffmanTree otherTree, Letter topNodeData){
 		//make new node with added frequencies
 		Node topNode = new Node (topNodeData);
 		topNode.left = this.root;
@@ -70,7 +71,7 @@ public class MyHuffTree{
 		this.root = topNode;
 	}
 
-	public void insert(MyLetter data){
+	public void insert(Letter data){
 		Node newNode = new Node(data);
 		if(root == null){
 			root = newNode;
@@ -102,7 +103,7 @@ public class MyHuffTree{
 		}
 		else{
 			pInOrder(n.left);
-			inflattened += n.data.toString() + MyHuffTree.SEPARATOR;
+			inflattened += n.data.toString() + HuffmanTree.SEPARATOR;
 			pInOrder(n.right);
 		}
 	}
@@ -112,13 +113,13 @@ public class MyHuffTree{
 			return;
 		}
 		else{
-			preflattened += n.data.toString() + MyHuffTree.SEPARATOR;
+			preflattened += n.data.toString() + HuffmanTree.SEPARATOR;
 			pPreOrder(n.left);
 			pPreOrder(n.right);
 		}
 	}
 
-	public MyLetter getRootData(){
+	public Letter getRootData(){
 		return root.data;
 	}
 
@@ -184,6 +185,6 @@ public class MyHuffTree{
 		preflattened = preflattened.substring(0, preflattened.length() - 1);
 		inflattened = inflattened.substring(0, inflattened.length() - 1);
 		//since the trees will not have duplicate characters, searching for the last occurrence of the repeated characters should give the correct end
-		return preflattened + MyHuffTree.END + inflattened + MyHuffTree.END;
+		return preflattened + HuffmanTree.END + inflattened + HuffmanTree.END;
 	}
 }
