@@ -147,7 +147,6 @@ public class HuffmanTree {
 	public String encode(String input){
 		//first get the map of the letters
 		getCodes(input.length());
-		//System.out.println("Average length is : " + avgLength);
 		String toReturn = "";
 		for(int i = 0; i < input.length(); i++){
 			toReturn += map[(int)input.charAt(i)];
@@ -174,6 +173,7 @@ public class HuffmanTree {
 				throw new IllegalArgumentException("Invalid code");
 			}
 		}
+		decoded += ptr.data.asChar();
 		return decoded;
 	}
 	//returns flattened tree

@@ -12,6 +12,7 @@ import java.io.File;
 
 
 public class Editor extends JPanel implements ActionListener {
+    public static enum CHOOSER_TYPE {OPEN, SAVE};
     private JButton save, saveAs, open;
     private JTextField filename;
     private JEditorPane pane;
@@ -49,26 +50,20 @@ public class Editor extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e){
         Object src = e.getSource();
         if(src == open){
-            if(showWorkingFileDialog()){
+            if(showWorkingFileDialog(CHOOSER_TYPE.OPEN)){
                 File f = GUI.Info.getWorkingFile();
-                parent.showKeyDialog("Open file with encryption key:", true);
-                if(!GUI.Info.keySet()){
-                    //do not decrypt
-                    pane.setText(Utilities.readFile(f));
-                } else {
-                    pane.setText(FileEncryptor.read(f, new NaiveEncryptor(), GUI.Info.getKey()));
+                if(!parent.showKeyDialog("Open file with encryption key:", true)) {
+                    //user hit cancel
+                    return;
                 }
-
-
-                filename.setText(f.getName());
                 GUI.Info.setWorkingFile(f);
+                updateEditor();
             }
         } else if(src  == save){
             save();
         } else if(src == saveAs){
-            if(showWorkingFileDialog()){
-                parent.showKeyDialog("Save file with encryption key:");
-                if(!GUI.Info.keySet()){
+            if(showWorkingFileDialog(CHOOSER_TYPE.SAVE)){
+                if(!parent.showKeyDialog("Save file with encryption key:") || !GUI.Info.keySet()){
                     return;//cannot save
                 }
                 FileEncryptor.write(pane.getText(), GUI.Info.getWorkingFile(), new NaiveEncryptor(), GUI.Info.getKey());
@@ -77,8 +72,15 @@ public class Editor extends JPanel implements ActionListener {
     }
 
     //returns true if the user actually selects a file, false if the user cancels
-    public boolean showWorkingFileDialog(){
-        fc.showOpenDialog(parent);
+    public boolean showWorkingFileDialog(CHOOSER_TYPE c){
+        if(c == CHOOSER_TYPE.OPEN){
+            fc.setDialogTitle("Select a file to edit");
+            fc.showOpenDialog(parent);
+        } else if(c == CHOOSER_TYPE.SAVE){
+            fc.setDialogTitle("Choose a destination");
+            fc.showSaveDialog(parent);
+        }
+
         File f = fc.getSelectedFile();
         if(f != null) {
             filename.setText(f.getName());
@@ -89,9 +91,11 @@ public class Editor extends JPanel implements ActionListener {
     }
 
     public void save(){
-        parent.showKeyDialog("Save file with the following key:");
         if(!GUI.Info.workingFileSet()){
-            showWorkingFileDialog();
+            showWorkingFileDialog(CHOOSER_TYPE.SAVE);
+        }
+        if(!parent.showKeyDialog("Save file with the following key:")){
+            return;
         }
         if(!GUI.Info.keySet() || !GUI.Info.workingFileSet()){
             System.out.println("Save cancelled");
@@ -100,4 +104,14 @@ public class Editor extends JPanel implements ActionListener {
         FileEncryptor.write(pane.getText(), GUI.Info.getWorkingFile(), new NaiveEncryptor(), GUI.Info.getKey());
     }
 
+    public void updateEditor(){
+        File f = GUI.Info.getWorkingFile();
+        filename.setText(f.getName());
+        if(!GUI.Info.keySet()){
+            //do not decrypt
+            pane.setText(Utilities.readFile(f));
+        } else {
+            pane.setText(FileEncryptor.read(f, new NaiveEncryptor(), GUI.Info.getKey()));
+        }
+    }
 }

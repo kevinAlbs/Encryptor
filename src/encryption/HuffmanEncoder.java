@@ -115,16 +115,13 @@ public class HuffmanEncoder{
 	 */
 	public static String bitStringToCharacters(String s){
 		String output = "";
-		int numBytes = (int)Math.ceil(s.length()/8.0);
-		//how do I deal with the last bits?
-		int byteIndex = s.length();
 		while(s.length() > 0){
 			String bit_string = s.substring(0, Math.min(s.length(), 8));
 			if(s.length() < 8){
 				s = "";
 				//pad the end with zeros
 				String zeros = "00000000";
-				bit_string += zeros.substring(8 - bit_string.length());
+				bit_string += zeros.substring(0, 8 - bit_string.length());
 			} else {
 				s = s.substring(8); //chop off first 8
 			}

@@ -1,9 +1,5 @@
 package gui;
 
-
-import encryption.FileEncryptor;
-import encryption.NaiveEncryptor;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,6 +23,9 @@ public class GUI extends JFrame{
             }
             key = s;
         }
+        public static void removeKey(){
+            key = "";
+        }
         public static File getWorkingFile(){
             return working_file;
         }
@@ -36,22 +35,34 @@ public class GUI extends JFrame{
             }
             working_file = f;
         }
+        public static void removeWorkingFile(){
+            working_file = null;
+        }
     }
 
     public GUI(){
         ed = new Editor(this);
         this.add(ed, BorderLayout.CENTER);
+
+        final String default_filepath = "encrypted_text.etx";
+        File def = new File(default_filepath);
+        if(def.exists()){
+            if(showKeyDialog("Enter key to open default file \"" + default_filepath + "\"") && Info.keySet()){
+                Info.setWorkingFile(def);
+                ed.updateEditor();
+            }
+        }
     }
-    public void showKeyDialog(String message){
-        showKeyDialog(message, false);
+    public boolean showKeyDialog(String message){
+        return showKeyDialog(message, false);
     }
-    public void showKeyDialog(String message, boolean unencryptionOption){
+    public boolean showKeyDialog(String message, boolean unencryptionOption){
         final JPasswordField pw_key = new JPasswordField(30);
-        final JTextField tw_key = new JTextField(30);
+        final JTextField txt_key = new JTextField(30);
         final JCheckBox ck_show = new JCheckBox("Show password");
         if(Info.getKey() != ""){
             pw_key.setText(Info.getKey());
-            tw_key.setText(Info.getKey());
+            txt_key.setText(Info.getKey());
         }
 
 
@@ -62,22 +73,22 @@ public class GUI extends JFrame{
         ck_show.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent) {
                 if(ck_show.isSelected()){
-                    tw_key.setVisible(true);
+                    txt_key.setVisible(true);
                     pw_key.setVisible(false);
-                    tw_key.setText(new String(pw_key.getPassword()));
+                    txt_key.setText(new String(pw_key.getPassword()));
                 } else {
-                    tw_key.setVisible(false);
+                    txt_key.setVisible(false);
                     pw_key.setVisible(true);
-                    pw_key.setText(tw_key.getText());
+                    pw_key.setText(txt_key.getText());
                 }
                 panel.revalidate();
                 panel.repaint();
             }
         });
         panel.add(pw_key);
-        panel.add(tw_key);
+        panel.add(txt_key);
 
-        tw_key.setVisible(false);
+        txt_key.setVisible(false);
 
         Object[] options = {"Ok", "Cancel"};
         if(unencryptionOption){
@@ -85,18 +96,38 @@ public class GUI extends JFrame{
             options = o;
         }
         int option = JOptionPane.showOptionDialog(this,panel, "Enter your key", JOptionPane.NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 0);
-        if(option == 0) { //Ok
-            String k = new String(pw_key.getPassword());
-            Info.setKey(k);
+
+        if(option == 0) { //Ok for both
+            if(ck_show.isSelected()) {
+                Info.setKey(txt_key.getText());
+            }
+            else {
+                Info.setKey(new String(pw_key.getPassword()));
+            }
         }
+
+        if(unencryptionOption){
+            if(option == 1) {
+                //not encrypted, remove current key
+                Info.removeKey();
+            } else if (option == 2){
+                //cancel
+                return false;
+            }
+        } else if(option == 1){
+            return false;
+        }
+
+        return true;
     }
 
     public static void main(String[] args){
         JFrame screen = new GUI();
         screen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        screen.setSize(600,400);
+        screen.setSize(600, 400);
         screen.setLocationRelativeTo(null);
         screen.setVisible(true);
         screen.setTitle("Password Encryptor");
+
     }
 }

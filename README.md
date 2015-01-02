@@ -1,22 +1,16 @@
 Template Password Encryptor
 ===========================
 
-An implementation of huffman encoding and (naive/insecure) encryption of password data. This is meant to be a starting point, and is structured so extending with a custom encryption algorithm is easy (and encouraged). I plan to implement more sophisticated encryption classes in the future as examples.
+An implementation of huffman encoding and (naive/insecure) encryption of password data. This is meant to be a starting point, and is structured so extending with a custom encryption algorithm is easy. I plan to implement more sophisticated encryption classes in the future as examples.
 
 Usage
 -----
 
-To compile into build folder:
-`./build.sh`
-
-To create encryptor.jar:
-`./build.sh -jar`
-
 To encrypt a file:
-`java -jar encryptor.jar --action encrypt --from-file corpus.txt --to-file encrypted_corpus.txt --key password`
+`java Runner --action encrypt --from-file corpus.txt --to-file encrypted_corpus.txt --key password`
 
 To decrypt a file (and print to stdout):
-`java -jar encryptor.jar --action decrypt --from-file encrypted_corpus.txt --key password`
+`java Runner --action decrypt --from-file encrypted_corpus.txt --key password`
 
 Current Status
 --------------
@@ -25,7 +19,11 @@ The encryption algorithm simply copies the user supplied "master password" to th
 
 I would eventually like to make a GUI for this, and possibly make this into a password locker program.
 
-Upcoming features/fixes:
-- fix last letter bug
-- propagation of io exceptions and visual feedback (not println's)
-- revision history for ctrl-z
+Upcoming features/fixes
+------------------------
+- revision history + keyboard shortcuts (ctrl-z, ctrl-s, etc.)
+- visual feedback of IO errors (not println's)
+- single letter bug (fails to encrypt if file is one letter)
+- more sophisticated encryption class
+- improve performance of string manipulation with stringbuilder
+- either support for or explicit error on non-ascii characters

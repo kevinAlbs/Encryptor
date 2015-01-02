@@ -1,4 +1,4 @@
-import encryption.*;
+package encryption;
 
 /* CLI runner
  * manages file input/output, and passes off data to huffman encoder and encryptor 
