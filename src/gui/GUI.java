@@ -6,6 +6,8 @@ import encryption.NaiveEncryptor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 public class GUI extends JFrame{
@@ -44,15 +46,39 @@ public class GUI extends JFrame{
         showKeyDialog(message, false);
     }
     public void showKeyDialog(String message, boolean unencryptionOption){
-        JPasswordField pw_key = new JPasswordField(30);
+        final JPasswordField pw_key = new JPasswordField(30);
+        final JTextField tw_key = new JTextField(30);
+        final JCheckBox ck_show = new JCheckBox("Show password");
         if(Info.getKey() != ""){
             pw_key.setText(Info.getKey());
-        } else {
-            pw_key = new JPasswordField(30);
+            tw_key.setText(Info.getKey());
         }
-        JPanel panel = new JPanel();
+
+
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.add(new JLabel(message));
+        panel.add(ck_show);
+        ck_show.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent actionEvent) {
+                if(ck_show.isSelected()){
+                    tw_key.setVisible(true);
+                    pw_key.setVisible(false);
+                    tw_key.setText(new String(pw_key.getPassword()));
+                } else {
+                    tw_key.setVisible(false);
+                    pw_key.setVisible(true);
+                    pw_key.setText(tw_key.getText());
+                }
+                panel.revalidate();
+                panel.repaint();
+            }
+        });
         panel.add(pw_key);
+        panel.add(tw_key);
+
+        tw_key.setVisible(false);
+
         Object[] options = {"Ok", "Cancel"};
         if(unencryptionOption){
             Object[] o = {"Ok", "File is not encrypted", "Cancel"};
